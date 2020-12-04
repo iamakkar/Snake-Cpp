@@ -68,6 +68,7 @@ void Draw(int x, int y, int fx, int fy)
             }
         }
     }
+
     grid[x][y] = '*';
     grid[fx][fy] = '^';
 
@@ -80,72 +81,72 @@ void Draw(int x, int y, int fx, int fy)
     }
 }
 
-void Movement(direction dir)
+enum direction Movement()
 {
-    cout << '1';
+    enum direction dir;
+    //cout << '1';
     char c;
-    while ((c = getchar()))
+    c = getchar(); //removed while loop here so that flow could come out of the function
+    if (c == 27)
     {
-        if (c == 27)
+        c = getchar();
+        if (c == 91)
         {
             c = getchar();
-            if (c == 91)
+            switch (c)
             {
-                c = getchar();
-
-                switch (c)
-                {
-                case 65:
-                    dir = UP;
-                    cout << c;
-                    break;
-                case 66:
-                    dir = DOWN;
-                    cout << c;
-                    break;
-                case 67:
-                    dir = RIGHT;
-                    cout << c;
-                    break;
-                case 68:
-                    dir = LEFT;
-                    cout << c;
-                    break;
-                }
+            case 65:
+                dir = UP;
+                //cout << c;
+                break;
+            case 66:
+                dir = DOWN;
+                //cout << c;
+                break;
+            case 67:
+                dir = RIGHT;
+                //cout << c;
+                break;
+            case 68:
+                dir = LEFT;
+                //cout << c;
+                break;
             }
         }
     }
+    return dir;
 }
 
-void Logic(direction dir, int x, int y)
+void Logic(direction dir, int &x, int &y) //call by reference here
 {
-    cout << '2';
     switch (dir)
     {
     case UP:
-        x++;
-        break;
-    case DOWN:
         x--;
         break;
+    case DOWN:
+        x++;
+        break;
     case LEFT:
-        y++;
+        y--;
         break;
     case RIGHT:
-        y--;
+        y++;
         break;
     }
 }
 
 int main()
 {
+    system("stty cbreak"); //enter key (\n) or any whitespace character no longer required to enter inputs
+    system("stty -echo");  //do not echo input to screen (can't see what you type as input)
     snake sn;
     fruit fr;
     fr.set_fruit(rand() % 20, rand() % 20);
     while (!gameOver)
     {
         Draw(sn.i, sn.j, fr.i, fr.j);
-        Movement(sn.dir);
+        sn.dir = Movement();
         Logic(sn.dir, sn.i, sn.j);
     }
 
