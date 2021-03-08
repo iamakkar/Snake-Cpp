@@ -1,7 +1,7 @@
 # Snake-Cpp
 A simple snake game using cpp
 
-##Procedure
+## Procedure
 Enter the following code on a g++ compiler terminal window:<br/>
 ```g++ -std=c++11 same.cpp -o run -lncurses```
 
