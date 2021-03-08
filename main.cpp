@@ -1,10 +1,16 @@
 #include <iostream>
 #include <cstdlib>
-#include <ctime>
-#include <unistd.h>
-#include <thread>
-
-using namespace std;
+#ifndef _WIN32
+#include <ncurses.h>
+#endif
+// #ifdef _WIN32
+// #include <conio.h>
+// #endif
+#include <string.h>
+#include <vector>
+#include <utility>
+#include <map>
+#include <algorithm>
 
 const int width = 20, height = 20;
 char grid[width + 2][height + 3];
@@ -21,15 +27,12 @@ enum direction
 class snake
 {
 public:
-    int i;
-    int j;
-    int tailLength;
+    std::vector<std::pair<int, int> > cord;
     enum direction dir;
     snake()
     {
-        i = 10;
-        j = 10;
-        tailLength = 1;
+        std::pair<int, int> head(10, 10);
+        cord.push_back(head);
         dir = UP;
     }
 };
@@ -47,9 +50,9 @@ public:
 };
 
 //DRAW THE AREA
-void Draw(int x, int y, int fx, int fy)
+void Draw(int fx, int fy, snake &sn)
 {
-    system("clear");
+    // system("clear");
     for (int i = 0; i < width + 2; i++)
     {
         for (int j = 0; j < height + 3; j++)
@@ -68,57 +71,45 @@ void Draw(int x, int y, int fx, int fy)
             }
         }
     }
-
-    grid[x][y] = '*';
     grid[fx][fy] = '^';
+    for (int i = 0; i < sn.cord.size(); i++)
+    {
+        grid[sn.cord[i].first][sn.cord[i].second] = '*';
+    }
 
     for (int i = 0; i < width + 2; i++)
     {
         for (int j = 0; j < height + 3; j++)
         {
-            cout << grid[i][j];
+            printw("%c", grid[i][j]);
         }
     }
 }
 
-enum direction Movement()
+void Movement(direction &dir)
 {
-    enum direction dir;
-    //cout << '1';
-    char c;
-    c = getchar(); //removed while loop here so that flow could come out of the function
-    if (c == 27)
+    int x = getch();
+    if (x == KEY_LEFT && dir != RIGHT)
+        dir = LEFT;
+    else if (x == KEY_RIGHT && dir != LEFT)
+        dir = RIGHT;
+    else if (x == KEY_UP && dir != DOWN)
+        dir = UP;
+    else if (x == KEY_DOWN && dir != UP)
+        dir = DOWN;
+    clear();
+}
+
+void Logic(direction dir, std::vector<std::pair<int, int> > &v) //call by reference here
+{
+    // set first element to position determined by keyboard input
+    // set all other elements to position of previous element
+    for (int i = v.size() - 1; i > 0; i--)
     {
-        c = getchar();
-        if (c == 91)
-        {
-            c = getchar();
-            switch (c)
-            {
-            case 65:
-                dir = UP;
-                //cout << c;
-                break;
-            case 66:
-                dir = DOWN;
-                //cout << c;
-                break;
-            case 67:
-                dir = RIGHT;
-                //cout << c;
-                break;
-            case 68:
-                dir = LEFT;
-                //cout << c;
-                break;
-            }
-        }
+        v[i].first = v[i - 1].first;
+        v[i].second = v[i - 1].second;
     }
-    return dir;
-}
-
-void Logic(direction dir, int &x, int &y) //call by reference here
-{
+    int &x = v[0].first, &y = v[0].second;
     switch (dir)
     {
     case UP:
@@ -136,19 +127,60 @@ void Logic(direction dir, int &x, int &y) //call by reference here
     }
 }
 
+inline bool check_fruit(int x, int y, int fx, int fy)
+{
+    return (x == fx && y == fy);
+}
+
+void GameOver(snake &sn)
+{
+    int row = sn.cord[0].first, col = sn.cord[0].second;
+    if (row <= 0 || col <= 0 || row > 20 || col > 20)
+        gameOver = true;
+    std::map<std::pair<int, int>, bool> m;
+    for (int i = 0; i < sn.cord.size(); i++)
+    {
+        if (m[sn.cord[i]])
+            gameOver = true;
+        else
+            m[sn.cord[i]] = true;
+    }
+}
+
 int main()
 {
-    system("stty cbreak"); //enter key (\n) or any whitespace character no longer required to enter inputs
-    system("stty -echo");  //do not echo input to screen (can't see what you type as input)
+    initscr(); /*initialises curses in the terminal*/
+
+    cbreak();             /*Do not require enter key for input*/
+    keypad(stdscr, TRUE); /*allows for input like arrow keys, F1, F2 etc.*/
+    noecho();             /*Do not echo input to screen*/
+    nodelay(stdscr, TRUE);
+    scrollok(stdscr, TRUE);
+    curs_set(FALSE);
+    refresh();
+
     snake sn;
     fruit fr;
-    fr.set_fruit(rand() % 20, rand() % 20);
+    fr.set_fruit(rand() % 20 + 1, rand() % 20 + 1);
     while (!gameOver)
     {
-        Draw(sn.i, sn.j, fr.i, fr.j);
-        sn.dir = Movement();
-        Logic(sn.dir, sn.i, sn.j);
+        Movement(sn.dir);
+        Logic(sn.dir, sn.cord);
+        if (check_fruit(sn.cord[0].first, sn.cord[0].second, fr.i, fr.j))
+        {
+            fr.set_fruit(rand() % 20 + 1, rand() % 20 + 1);
+            std::pair<int, int> temp(sn.cord[0].first + 1, sn.cord[0].second);
+            sn.cord.push_back(temp);
+        }
+        // GameOver(sn);
+        Draw(fr.i, fr.j, sn);
+        napms(200); // microsecond delay
+        refresh();  // echoes to main terminal screen
     }
+    endwin(); //end ncurses
 
     return 0;
 }
+
+//g++ -std=c++11 same.cpp -o run -lncurses
+//./run
