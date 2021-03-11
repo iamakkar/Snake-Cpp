@@ -132,18 +132,37 @@ inline bool check_fruit(int x, int y, int fx, int fy)
     return (x == fx && y == fy);
 }
 
+void after()
+{
+    std::cout << "\e[31m";
+    std::cout << "  ▄████  ▄▄▄       ███▄ ▄███▓▓█████     ▒█████   ██▒   █▓▓█████  ██▀███  \n";
+    std::cout << " ██▒ ▀█▒▒████▄    ▓██▒▀█▀ ██▒▓█   ▀    ▒██▒  ██▒▓██░   █▒▓█   ▀ ▓██ ▒ ██▒\n";
+    std::cout << "▒██░▄▄▄░▒██  ▀█▄  ▓██    ▓██░▒███      ▒██░  ██▒ ▓██  █▒░▒███   ▓██ ░▄█ ▒" << std::endl;
+    std::cout << "░▓█  ██▓░██▄▄▄▄██ ▒██    ▒██ ▒▓█  ▄    ▒██   ██░  ▒██ █░░▒▓█  ▄ ▒██▀▀█▄  " << std::endl;
+    std::cout << "░▒▓███▀▒ ▓█   ▓██▒▒██▒   ░██▒░▒████▒   ░ ████▓▒░   ▒▀█░  ░▒████▒░██▓ ▒██▒" << std::endl;
+    std::cout << " ░▒   ▒  ▒▒   ▓▒█░░ ▒░   ░  ░░░ ▒░ ░   ░ ▒░▒░▒░    ░ ▐░  ░░ ▒░ ░░ ▒▓ ░▒▓░" << std::endl;
+    std::cout << "  ░   ░   ▒   ▒▒ ░░  ░      ░ ░ ░  ░     ░ ▒ ▒░    ░ ░░   ░ ░  ░  ░▒ ░ ▒░" << std::endl;
+    std::cout << "░ ░   ░   ░   ▒   ░      ░      ░      ░ ░ ░ ▒       ░░     ░     ░░   ░ " << std::endl;
+    std::cout << "      ░       ░  ░       ░      ░  ░       ░ ░        ░     ░  ░   ░     " << std::endl;
+    std::cout << "                                                     ░                   \e[0m" << std::endl;
+    system("stty echo");
+    exit(1);
+}
+
 void GameOver(snake &sn)
 {
     int row = sn.cord[0].first, col = sn.cord[0].second;
     if (row <= 0 || col <= 0 || row > 20 || col > 20)
         gameOver = true;
     std::map<std::pair<int, int>, bool> m;
-    for (int i = 0; i < sn.cord.size(); i++)
+    std::pair<int, int> head = sn.cord[0];
+    for (int i = 1; i < sn.cord.size(); i++)
     {
-        if (m[sn.cord[i]])
+        if (head == sn.cord[i])
+        {
             gameOver = true;
-        else
-            m[sn.cord[i]] = true;
+            break;
+        }
     }
 }
 
@@ -172,11 +191,12 @@ int main()
             std::pair<int, int> temp(sn.cord[0].first + 1, sn.cord[0].second);
             sn.cord.push_back(temp);
         }
-        // GameOver(sn);
+        GameOver(sn);
         Draw(fr.i, fr.j, sn);
         napms(200); // microsecond delay
         refresh();  // echoes to main terminal screen
     }
+    after();
     endwin(); //end ncurses
 
     return 0;
