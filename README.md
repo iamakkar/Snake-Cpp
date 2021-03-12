@@ -1,5 +1,8 @@
 # Snake-Cpp
-A simple snake game using cpp
+A simple snake game using cpp for g++ and apple clang compiler using ncurses.
+
+## Sample
+!['sample'](https://github.com/iamakkar/Snake-Cpp/blob/master/snake.gif)
 
 ## Procedure
 Enter the following code on a g++ compiler terminal window:<br/>
