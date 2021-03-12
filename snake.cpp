@@ -131,22 +131,43 @@ inline bool check_fruit(int x, int y, int fx, int fy)
 {
     return (x == fx && y == fy);
 }
-
-void after()
+// ifndef _WIN32
+void after(snake &sn)
 {
-    std::cout << "\e[31m";
-    std::cout << "  ▄████  ▄▄▄       ███▄ ▄███▓▓█████     ▒█████   ██▒   █▓▓█████  ██▀███  \n";
-    std::cout << " ██▒ ▀█▒▒████▄    ▓██▒▀█▀ ██▒▓█   ▀    ▒██▒  ██▒▓██░   █▒▓█   ▀ ▓██ ▒ ██▒\n";
-    std::cout << "▒██░▄▄▄░▒██  ▀█▄  ▓██    ▓██░▒███      ▒██░  ██▒ ▓██  █▒░▒███   ▓██ ░▄█ ▒" << std::endl;
-    std::cout << "░▓█  ██▓░██▄▄▄▄██ ▒██    ▒██ ▒▓█  ▄    ▒██   ██░  ▒██ █░░▒▓█  ▄ ▒██▀▀█▄  " << std::endl;
-    std::cout << "░▒▓███▀▒ ▓█   ▓██▒▒██▒   ░██▒░▒████▒   ░ ████▓▒░   ▒▀█░  ░▒████▒░██▓ ▒██▒" << std::endl;
-    std::cout << " ░▒   ▒  ▒▒   ▓▒█░░ ▒░   ░  ░░░ ▒░ ░   ░ ▒░▒░▒░    ░ ▐░  ░░ ▒░ ░░ ▒▓ ░▒▓░" << std::endl;
-    std::cout << "  ░   ░   ▒   ▒▒ ░░  ░      ░ ░ ░  ░     ░ ▒ ▒░    ░ ░░   ░ ░  ░  ░▒ ░ ▒░" << std::endl;
-    std::cout << "░ ░   ░   ░   ▒   ░      ░      ░      ░ ░ ░ ▒       ░░     ░     ░░   ░ " << std::endl;
-    std::cout << "      ░       ░  ░       ░      ░  ░       ░ ░        ░     ░  ░   ░     " << std::endl;
-    std::cout << "                                                     ░                   \e[0m" << std::endl;
-    system("stty echo");
-    exit(1);
+    erase();
+    start_color();
+
+    init_pair(2, COLOR_BLACK, COLOR_RED);
+
+    attron(COLOR_PAIR(2));
+    printw("   __ _  __ _ _ __ ___   ___    _____   _____ _ __ \n");
+    printw("  / _` |/ _` | '_ ` _ \\ / _ \\  / _ \\ \\ / / _ \\ '__|\n");
+    printw(" | (_| | (_| | | | | | |  __/ | (_) \\ V /  __/ |   \n");
+    printw("  \\__, |\\__,_|_| |_| |_|\\___|  \\___/ \\_/ \\___|_|   \n");
+    printw("   __/ |                                           \n");
+    printw("  |___/                                            \n");
+    attroff(COLOR_PAIR(2));
+
+    printw("YOUR SCORE IS: %d\n\n", sn.cord.size() - 1);
+    printw("PRESS ANY KEY TO EXIT !!");
+
+    nodelay(stdscr, FALSE);
+    getch();
+}
+// endif
+
+void about()
+{
+    erase();
+    printw("    __        _______ _     ____ ___  __  __ _____   _____ ___    ____  _   _    _    _  _______ \n");
+    printw(" \\ \\      / / ____| |   / ___/ _ \\|  \\/  | ____| |_   _/ _ \\  / ___|| \\ | |  / \\  | |/ / ____|   \n");
+    printw("  \\ \\ /\\ / /|  _| | |  | |  | | | | |\\/| |  _|     | || | | | \\___ \\|  \\| | / _ \\ | ' /|  _|     \n");
+    printw("   \\ V  V / | |___| |__| |__| |_| | |  | | |___    | || |_| |  ___) | |\\  |/ ___ \\| . \\| |___    \n");
+    printw("    \\_/\\_/  |_____|_____\\____\\___/|_|  |_|_____|   |_| \\___/  |____/|_| \\_/_/   \\_\\_|\\_\\_____|   \n");
+    printw("                                                                                                 \n");
+    printw("PRESS ANY KEY TO CONTINUE !!");
+    nodelay(stdscr, FALSE);
+    getch();
 }
 
 void GameOver(snake &sn)
@@ -168,7 +189,9 @@ void GameOver(snake &sn)
 
 int main()
 {
+    // ifndef _WIN32
     initscr(); /*initialises curses in the terminal*/
+    about();
 
     cbreak();             /*Do not require enter key for input*/
     keypad(stdscr, TRUE); /*allows for input like arrow keys, F1, F2 etc.*/
@@ -177,6 +200,16 @@ int main()
     scrollok(stdscr, TRUE);
     curs_set(FALSE);
     refresh();
+    // endif
+
+    // ifdef _WIN32
+    // some conio function
+    // endif
+
+    start_color();
+    init_pair(1, COLOR_WHITE, COLOR_BLACK);
+
+    attron(COLOR_PAIR(1));
 
     snake sn;
     fruit fr;
@@ -196,7 +229,8 @@ int main()
         napms(200); // microsecond delay
         refresh();  // echoes to main terminal screen
     }
-    after();
+    after(sn);
+    attroff(COLOR_PAIR(1));
     endwin(); //end ncurses
 
     return 0;
