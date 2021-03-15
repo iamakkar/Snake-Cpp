@@ -13,6 +13,5 @@ To run the file:<br/>
 ```
 
 ## Sample
-!['sample'](https://github.com/iamakkar/Snake-Cpp/blob/master/welcome.png)
-!['sample'](https://github.com/iamakkar/Snake-Cpp/blob/master/snake.mov)
-!['sample'](https://github.com/iamakkar/Snake-Cpp/blob/master/over.png)
+A GIF showing the working of the game: 
+!['sample'](https://github.com/PK-cod3ch3mist/Snake-Cpp/blob/master/snake.gif)
