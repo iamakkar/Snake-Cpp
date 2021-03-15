@@ -72,6 +72,10 @@ void Draw(int fx, int fy, snake &sn)
         }
     }
     grid[fx][fy] = '^';
+    start_color();
+    init_pair(3, COLOR_GREEN, COLOR_GREEN);
+    init_pair(4, COLOR_RED, COLOR_RED);
+
     for (int i = 0; i < sn.cord.size(); i++)
     {
         grid[sn.cord[i].first][sn.cord[i].second] = '*';
@@ -81,7 +85,11 @@ void Draw(int fx, int fy, snake &sn)
     {
         for (int j = 0; j < height + 3; j++)
         {
+            if (grid[i][j] == '*') attron(COLOR_PAIR(3));
+            else if (grid[i][j] == '^') attron(COLOR_PAIR(4));
             printw("%c", grid[i][j]);
+            attroff(COLOR_PAIR(3));
+            attroff(COLOR_PAIR(4));
         }
     }
 }
