@@ -89,7 +89,7 @@ void Draw(int fx, int fy, snake &sn)
             if (grid[i][j] == '*') attron(COLOR_PAIR(3));
             else if (grid[i][j] == '^') attron(COLOR_PAIR(4));
             else if (grid[i][j] == 'X') attron(COLOR_PAIR(5));
-            printw("%c", grid[i][j]);
+            printw(" %c", grid[i][j]);
             attroff(COLOR_PAIR(3));
             attroff(COLOR_PAIR(4));
             attroff(COLOR_PAIR(5));
